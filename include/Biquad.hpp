@@ -2,6 +2,8 @@
 #include <AK/SoundEngine/Common/AkSimd.h>
 #include <AK/SoundEngine/Common/AkCommonDefs.h>
 
+#include "Util.hpp"
+
 #ifndef M_PI
 #define M_PI 3.14159265358979323846f
 #endif
@@ -229,9 +231,9 @@ namespace Wpe
 
         void Process(AkSampleType* io_pBuffer, AkUInt32 in_uSize)
         {
-            AKASSERT(in_uSize % uSimdSize == 0);
+            AKASSERT(in_uSize % DEFAULT_SIMD_WIDTH == 0);
 
-            for (AkUInt32 i = 0; i < in_uSize; i += uSimdSize)
+            for (AkUInt32 i = 0; i < in_uSize; i += DEFAULT_SIMD_WIDTH)
             {
                 Process(io_pBuffer + i);
             }
@@ -239,9 +241,9 @@ namespace Wpe
 
         void Process(AkSampleType* in_pInBuffer, AkSampleType* out_pOutBuffer, AkUInt32 in_uSize)
         {
-            AKASSERT(in_uSize % uSimdSize == 0);
+            AKASSERT(in_uSize % DEFAULT_SIMD_WIDTH == 0);
 
-            for (AkUInt32 i = 0; i < in_uSize; i += uSimdSize)
+            for (AkUInt32 i = 0; i < in_uSize; i += DEFAULT_SIMD_WIDTH)
             {
                 AKSIMD_V4F32 vIn = AKSIMD_LOAD_V4F32(in_pInBuffer + i);
                 AKSIMD_V4F32 vOut = Process(vIn);
@@ -250,8 +252,6 @@ namespace Wpe
         }
 
     private:
-        static constexpr auto uSimdSize = 4;
-
         AKSIMD_V4F32 coeff_xp3{};
         AKSIMD_V4F32 coeff_xp2{};
         AKSIMD_V4F32 coeff_xp1{};
